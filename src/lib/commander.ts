@@ -381,6 +381,10 @@ export function resolveCommanderWaves(tasks: CommanderTask[]): CommanderTask[][]
 export function isBuildIntent(message: string): boolean {
   const lower = message.toLowerCase();
 
+  // Research/analysis requests should NOT be classified as build intent
+  const isResearchIntent = /\b(research|investigate|analyze|compare|review|evaluate|study|explore|assess|audit|survey|examine|look\s*into|find\s*out|what\s*(gaps|differences|missing)|gap\s*analysis|pros?\s*and\s*cons?)\b/.test(lower);
+  if (isResearchIntent) return false;
+
   // Coding verbs — both creation AND modification
   const hasCodingVerb = /\b(build|create|implement|scaffold|generate|develop|make|set\s*up|write|fix|update|refactor|modify|change|add|remove|redesign|rewrite|improve|optimize|convert|migrate|integrate|replace|restructure)\b/.test(lower);
   if (!hasCodingVerb) return false;

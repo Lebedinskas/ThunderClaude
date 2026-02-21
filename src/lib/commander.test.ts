@@ -786,6 +786,22 @@ describe("isBuildIntent", () => {
   it("detects implement + endpoint", () => {
     expect(isBuildIntent("Implement the /users endpoint")).toBe(true);
   });
+
+  it("rejects research with build verb + code artifact", () => {
+    expect(isBuildIntent("make research what gaps we have versus Roblox Studio, what missing that we can create Roblox game")).toBe(false);
+  });
+
+  it("rejects investigate requests", () => {
+    expect(isBuildIntent("investigate what gaps we have in the codebase")).toBe(false);
+  });
+
+  it("rejects compare/evaluate requests", () => {
+    expect(isBuildIntent("compare our app features with competitor")).toBe(false);
+  });
+
+  it("rejects gap analysis requests", () => {
+    expect(isBuildIntent("what gaps are there in our system versus theirs")).toBe(false);
+  });
 });
 
 // ── COMMANDER_BUILD_PLANNING_PROMPT ──────────────────────────────────────────
