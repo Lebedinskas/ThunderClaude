@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* ── Base ──────────────────────────────────────────────────────── */
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(63, 63, 70, 0.6);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(82, 82, 91, 0.8);
+}
+
+/* ── Form elements ────────────────────────────────────────────── */
+
+select option {
+  background-color: #18181b;
+  color: #a1a1aa;
+}
+
+textarea::placeholder {
+  font-size: 13px;
+}
+
+/* ── Code ─────────────────────────────────────────────────────── */
+
+.prose pre {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.prose code {
+  font-size: 12px;
+}
+.prose :where(code):not(:where(pre *)) {
+  padding: 1px 5px;
+  border-radius: 3px;
+  background-color: rgba(39, 39, 42, 0.8);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+  font-size: 0.85em;
+}
+
+/* ── ThunderClaude prose typography ───────────────────────────── */
+
+.tc-prose :where(ol, ul) {
+  padding-left: 1.25em;
+}
+.tc-prose :where(li) {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+.tc-prose :where(li)::marker {
+  color: #71717a;
+}
+
+.tc-prose :where(li > ol, li > ul) {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+/* Bold paragraph openers — "**Go (net/http)**:" style */
+.tc-prose :where(p) > strong:first-child {
+  color: #e4e4e7;
+  letter-spacing: -0.01em;
+}
+
+/* Headings */
+.tc-prose :where(h1, h2, h3) {
+  letter-spacing: -0.02em;
+}
+.tc-prose > :where(h1, h2, h3):first-child {
+  margin-top: 0;
+}
+
+/* ── Tables ───────────────────────────────────────────────────── */
+
+.tc-table tbody tr:nth-child(even) {
+  background-color: rgba(39, 39, 42, 0.15);
+}
+
+/* ── Transitions ──────────────────────────────────────────────── */
+
+/* Smooth panel transitions */
+.tc-panel-enter {
+  animation: tc-slide-in 150ms ease-out;
+}
+@keyframes tc-slide-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
