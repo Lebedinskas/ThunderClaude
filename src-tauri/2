@@ -1,0 +1,12 @@
+
+added 147 packages, and audited 148 packages in 10s
+
+25 packages are looking for funding
+  run `npm fund` for details
+
+4 high severity vulnerabilities
+
+Some issues need review, and may require choosing
+a different dependency.
+
+Run `npm audit` for details.

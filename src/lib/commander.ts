@@ -381,12 +381,16 @@ export function resolveCommanderWaves(tasks: CommanderTask[]): CommanderTask[][]
 export function isBuildIntent(message: string): boolean {
   const lower = message.toLowerCase();
 
-  // Must have a build verb
-  const hasBuildVerb = /\b(build|create|implement|scaffold|generate|develop|make|set\s*up|write)\b/.test(lower);
-  if (!hasBuildVerb) return false;
+  // Coding verbs — both creation AND modification
+  const hasCodingVerb = /\b(build|create|implement|scaffold|generate|develop|make|set\s*up|write|fix|update|refactor|modify|change|add|remove|redesign|rewrite|improve|optimize|convert|migrate|integrate|replace|restructure)\b/.test(lower);
+  if (!hasCodingVerb) return false;
 
-  // Must also reference a code artifact (not "write a poem")
-  return /\b(app|application|component|page|feature|project|website|site|dashboard|api|service|module|game|tool|system|engine|ui|interface|function|class|library|endpoint|route|hook|form|modal|dialog|panel|widget|layout|theme|plugin|server|client|database|schema|migration|test|spec)\b/.test(lower);
+  // Must reference a code artifact (not "fix my car")
+  const hasCodeArtifact = /\b(app|application|component|page|feature|project|website|site|dashboard|api|service|module|game|tool|system|engine|ui|interface|function|class|library|endpoint|route|hook|form|modal|dialog|panel|widget|layout|theme|plugin|server|client|database|schema|migration|test|spec|code|bug|error|issue|style|css|type|store|state|config|file|files)\b/.test(lower);
+  if (hasCodeArtifact) return true;
+
+  // Catch-all: references to file operations or coding context
+  return /\b(step\s*by\s*step|all\s*(the\s*)?(issues|errors|bugs|problems|fixes)|source\s*files?|codebase|report)\b/.test(lower);
 }
 
 export const COMMANDER_BUILD_PLANNING_PROMPT = `You are Freya in BUILD MODE. You decompose a build task into exactly 2 parallel workers — one Claude, one Gemini — each with clearly separated file responsibilities. No file may be assigned to both workers.

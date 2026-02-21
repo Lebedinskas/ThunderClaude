@@ -11,8 +11,6 @@ import {
   type DomBloxNode,
   type SceneState,
   type HistorySnapshot,
-  type Vector3,
-  type Color4,
   NodeType,
   TransformMode,
   MAX_HISTORY,

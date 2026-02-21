@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { enable, disable, isEnabled } from "@tauri-apps/plugin-autostart";
+import { checkForUpdates, installUpdate, type UpdateStatus } from "../../lib/updater";
 
 interface SettingsPanelProps {
   onClose: () => void;
@@ -36,6 +37,68 @@ function Toggle({
         }`}
       />
     </button>
+  );
+}
+
+function UpdateSection() {
+  const [status, setStatus] = useState<UpdateStatus | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [installing, setInstalling] = useState(false);
+
+  const handleCheck = async () => {
+    setChecking(true);
+    setStatus(null);
+    const result = await checkForUpdates();
+    setStatus(result);
+    setChecking(false);
+  };
+
+  const handleInstall = async () => {
+    setInstalling(true);
+    try {
+      await installUpdate();
+    } catch (err) {
+      setStatus({ available: false, error: String(err) });
+      setInstalling(false);
+    }
+  };
+
+  return (
+    <div>
+      <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
+        Updates
+      </h3>
+      <div className="space-y-2">
+        {status?.available ? (
+          <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <p className="text-sm text-amber-400 font-medium">
+              v{status.version} available
+            </p>
+            {status.notes && (
+              <p className="text-[11px] text-zinc-400 mt-1">{status.notes}</p>
+            )}
+            <button
+              onClick={handleInstall}
+              disabled={installing}
+              className="mt-2 px-3 py-1 text-xs font-medium rounded bg-amber-500 text-black hover:bg-amber-400 disabled:opacity-50 transition-colors"
+            >
+              {installing ? "Installing..." : "Download & Install"}
+            </button>
+          </div>
+        ) : status?.error ? (
+          <p className="text-[11px] text-red-400">{status.error}</p>
+        ) : status && !status.available ? (
+          <p className="text-[11px] text-green-400">You're up to date.</p>
+        ) : null}
+        <button
+          onClick={handleCheck}
+          disabled={checking || installing}
+          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-zinc-800 text-zinc-300 hover:bg-zinc-700 disabled:opacity-50 transition-colors"
+        >
+          {checking ? "Checking..." : "Check for Updates"}
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -227,6 +290,12 @@ export function SettingsPanel({ onClose, onVaultPathChange, customInstructions =
         {/* Divider */}
         <div className="border-t border-zinc-800/50" />
 
+        {/* Updates section */}
+        <UpdateSection />
+
+        {/* Divider */}
+        <div className="border-t border-zinc-800/50" />
+
         {/* About section */}
         <div>
           <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
@@ -235,7 +304,7 @@ export function SettingsPanel({ onClose, onVaultPathChange, customInstructions =
           <div className="space-y-1.5">
             <p className="text-sm text-zinc-300">ThunderClaude</p>
             <p className="text-[11px] text-zinc-600">
-              v0.1.0 — Fast Claude Desktop App
+              v0.2.0 — Fast Claude Desktop App
             </p>
             <p className="text-[11px] text-zinc-700 mt-2">
               Ctrl+N New chat · Ctrl+B Sidebar · Ctrl+, Settings

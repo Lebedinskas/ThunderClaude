@@ -1,6 +1,6 @@
 [package]
 name = "thunderclaude"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
@@ -37,3 +37,6 @@ strip = true
 lto = true
 codegen-units = 1
 opt-level = "s"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"
