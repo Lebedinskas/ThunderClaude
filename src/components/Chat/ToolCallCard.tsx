@@ -171,7 +171,12 @@ function CompactToolGroup({
   );
 }
 
-// ── Tool call list with smart compaction ─────────────────────────────────────
+// ── Tool call list with aggressive compaction ────────────────────────────────
+//
+// During streaming:  completed tools HIDDEN — only the active tool card shown
+//                    (the AgenticStatusBar already shows the running count)
+// After streaming:   all tools collapsed into compact category chips
+// Force-expanded:    all tools shown individually (click "show all")
 
 export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; isStreaming?: boolean }) {
   const [forceExpanded, setForceExpanded] = useState(false);
@@ -186,12 +191,36 @@ export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; is
   const completedTools = tools.filter((t) => !t.isRunning);
   const activeTools = tools.filter((t) => t.isRunning);
 
-  // During streaming: compact completed tools as soon as there's 1+ completed
-  // After streaming: compact when 2+ completed (single tool just shows inline)
-  const compactThreshold = isStreaming ? 1 : 2;
-  const shouldCompact = completedTools.length >= compactThreshold && !forceExpanded;
+  // Force-expanded: show everything
+  if (forceExpanded) {
+    return (
+      <>
+        {tools.map((tool) => (
+          <ToolCallCard key={tool.id} tool={tool} />
+        ))}
+        <button
+          onClick={() => setForceExpanded(false)}
+          className="text-[10px] text-zinc-600 hover:text-zinc-400 px-1 py-0.5 rounded hover:bg-zinc-800/60 transition-colors"
+        >
+          collapse
+        </button>
+      </>
+    );
+  }
 
-  if (!shouldCompact) {
+  // During streaming: hide completed tools, only show the active one
+  if (isStreaming) {
+    return (
+      <>
+        {activeTools.map((tool) => (
+          <ToolCallCard key={tool.id} tool={tool} />
+        ))}
+      </>
+    );
+  }
+
+  // After streaming: 0-1 tools → show normally, 2+ → compact chips
+  if (tools.length <= 1) {
     return (
       <>
         {tools.map((tool) => (
@@ -201,7 +230,7 @@ export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; is
     );
   }
 
-  // Group completed tools by category
+  // Group completed tools by category into compact chips
   const groups = new Map<ToolCategory, ToolCallInfo[]>();
   for (const tool of completedTools) {
     const cat = categorize(tool.name);
@@ -211,32 +240,24 @@ export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; is
   }
 
   return (
-    <>
-      {/* Compact summary of completed tools */}
-      <div className="flex items-center gap-1 flex-wrap">
-        {Array.from(groups.entries()).map(([cat, catTools]) => (
-          <CompactToolGroup
-            key={cat}
-            category={cat}
-            tools={catTools}
-            onExpand={() => setForceExpanded(true)}
-          />
-        ))}
-        <span className="text-[10px] text-zinc-700 tabular-nums">{completedTools.length} done</span>
-        <button
-          onClick={() => setForceExpanded(true)}
-          className="text-[10px] text-zinc-600 hover:text-zinc-400 px-1 py-0.5 rounded hover:bg-zinc-800/60 transition-colors"
-          title="Show all tool calls"
-        >
-          show all
-        </button>
-      </div>
-
-      {/* Only the active (running) tool gets a full card */}
-      {activeTools.map((tool) => (
-        <ToolCallCard key={tool.id} tool={tool} />
+    <div className="flex items-center gap-1 flex-wrap">
+      {Array.from(groups.entries()).map(([cat, catTools]) => (
+        <CompactToolGroup
+          key={cat}
+          category={cat}
+          tools={catTools}
+          onExpand={() => setForceExpanded(true)}
+        />
       ))}
-    </>
+      <span className="text-[10px] text-zinc-700 tabular-nums">{completedTools.length} tools</span>
+      <button
+        onClick={() => setForceExpanded(true)}
+        className="text-[10px] text-zinc-600 hover:text-zinc-400 px-1 py-0.5 rounded hover:bg-zinc-800/60 transition-colors"
+        title="Show all tool calls"
+      >
+        show all
+      </button>
+    </div>
   );
 }
 

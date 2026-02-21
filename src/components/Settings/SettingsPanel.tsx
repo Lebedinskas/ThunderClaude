@@ -304,7 +304,7 @@ export function SettingsPanel({ onClose, onVaultPathChange, customInstructions =
           <div className="space-y-1.5">
             <p className="text-sm text-zinc-300">ThunderClaude</p>
             <p className="text-[11px] text-zinc-600">
-              v0.2.1 — Fast Claude Desktop App
+              v0.2.2 — Fast Claude Desktop App
             </p>
             <p className="text-[11px] text-zinc-700 mt-2">
               Ctrl+N New chat · Ctrl+B Sidebar · Ctrl+, Settings
