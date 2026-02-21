@@ -1,0 +1,11 @@
+{
+  "version": "0.2.1",
+  "notes": "Cleaner tool display: completed tools auto-compact into category chips during streaming. Only the active tool shows a full card.",
+  "pub_date": "2026-02-21T23:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTcGFxVUhjRE1JZEdEMmxuTk1aL2tvTGtFY240T3RCdXBUbDBBMCtoK0x6MGtZQXhrTFBWZ3pDVm1PemY5dUM4bm5XMWVSOHYwdytueEttQVgxQ3ZKeDNpdS9CV0dwSndVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzcxNzA2NTc2CWZpbGU6VGh1bmRlckNsYXVkZV8wLjIuMV94NjQtc2V0dXAuZXhlClc0TVRMMTRMMklZcGZBMDh5dnR0UktQbURTbk1seitGQkRMT0tQSFhBczlWWXl3Wkx1bXRRdDVzVG9Zd0NLb0diQ3NiMDlJYVVxR1hkWUdpVHNTcEF3PT0K",
+      "url": "https://github.com/Lebedinskas/ThunderClaude/releases/download/v0.2.1/ThunderClaude_0.2.1_x64-setup.exe"
+    }
+  }
+}

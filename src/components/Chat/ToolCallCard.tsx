@@ -144,38 +144,34 @@ function CompactToolGroup({
   const label = CATEGORY_LABELS[category];
   const count = tools.length;
 
-  // Show up to 3 file/command names as a compact summary
+  // Show up to 2 summaries for brevity
   const details = tools
     .map((t) => getToolSummary(t.name, t.input))
     .filter(Boolean)
-    .slice(0, 3);
+    .slice(0, 2);
   const moreCount = tools.length - details.length;
 
   return (
     <button
       onClick={onExpand}
-      className={`my-0.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] border transition-colors hover:bg-white/[0.02] ${colors.border} ${colors.bg}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] border transition-colors hover:bg-white/[0.03] ${colors.border} ${colors.bg}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${colors.dot} shrink-0`} />
-      <span className="text-zinc-400 font-medium">
-        {label} {count > 1 && <span className="text-zinc-600">{count}x</span>}
+      <span className={`w-1.5 h-1.5 rounded-full ${colors.dot} shrink-0 opacity-70`} />
+      <span className="text-zinc-500 font-medium">
+        {label}
+        {count > 1 && <span className="text-zinc-600 ml-0.5">&times;{count}</span>}
       </span>
       {details.length > 0 && (
-        <>
-          <span className="text-zinc-700">&middot;</span>
-          <span className="text-zinc-600 font-mono truncate max-w-[200px]">
-            {details.join(", ")}
-            {moreCount > 0 && ` +${moreCount}`}
-          </span>
-        </>
+        <span className="text-zinc-600 font-mono truncate max-w-[160px]">
+          {details.join(", ")}
+          {moreCount > 0 && ` +${moreCount}`}
+        </span>
       )}
     </button>
   );
 }
 
-// ── Tool call list with optional compaction ──────────────────────────────────
-
-const COMPACT_THRESHOLD = 5;
+// ── Tool call list with smart compaction ─────────────────────────────────────
 
 export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; isStreaming?: boolean }) {
   const [forceExpanded, setForceExpanded] = useState(false);
@@ -189,7 +185,11 @@ export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; is
 
   const completedTools = tools.filter((t) => !t.isRunning);
   const activeTools = tools.filter((t) => t.isRunning);
-  const shouldCompact = completedTools.length >= COMPACT_THRESHOLD && !forceExpanded;
+
+  // During streaming: compact completed tools as soon as there's 1+ completed
+  // After streaming: compact when 2+ completed (single tool just shows inline)
+  const compactThreshold = isStreaming ? 1 : 2;
+  const shouldCompact = completedTools.length >= compactThreshold && !forceExpanded;
 
   if (!shouldCompact) {
     return (
@@ -201,7 +201,7 @@ export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; is
     );
   }
 
-  // Group completed tools by category, show active tools individually
+  // Group completed tools by category
   const groups = new Map<ToolCategory, ToolCallInfo[]>();
   for (const tool of completedTools) {
     const cat = categorize(tool.name);
@@ -222,16 +222,17 @@ export function ToolCallList({ tools, isStreaming }: { tools: ToolCallInfo[]; is
             onExpand={() => setForceExpanded(true)}
           />
         ))}
+        <span className="text-[10px] text-zinc-700 tabular-nums">{completedTools.length} done</span>
         <button
           onClick={() => setForceExpanded(true)}
-          className="text-[10px] text-zinc-600 hover:text-zinc-400 px-1.5 py-0.5 rounded hover:bg-zinc-800/60 transition-colors"
+          className="text-[10px] text-zinc-600 hover:text-zinc-400 px-1 py-0.5 rounded hover:bg-zinc-800/60 transition-colors"
           title="Show all tool calls"
         >
-          expand all
+          show all
         </button>
       </div>
 
-      {/* Active tools always shown individually */}
+      {/* Only the active (running) tool gets a full card */}
       {activeTools.map((tool) => (
         <ToolCallCard key={tool.id} tool={tool} />
       ))}
